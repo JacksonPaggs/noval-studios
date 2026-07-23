@@ -20,8 +20,8 @@ export default function HeroPipeline() {
 
     const trigger = ScrollTrigger.create({
       trigger: sectionRef.current,
-      start: "top bottom",
-      end: "bottom top",
+      start: "top top",
+      end: "bottom bottom",
       scrub: true,
       onUpdate: (self) => {
         progressRef.current.value = self.progress;
@@ -32,11 +32,8 @@ export default function HeroPipeline() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative flex min-h-screen w-full flex-col items-start justify-center overflow-hidden px-6 sm:px-10"
-    >
-      <div className="pointer-events-none absolute inset-0">
+    <section ref={sectionRef} className="relative h-[300vh]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
         <Canvas camera={{ position: [0, 0, 14], fov: 45 }} dpr={[1, 1.5]}>
           <CameraRig progressRef={progressRef} />
           <SystemsCore progressRef={progressRef} />
@@ -49,30 +46,30 @@ export default function HeroPipeline() {
             />
           </EffectComposer>
         </Canvas>
-      </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
 
-      <div className="relative z-10 flex flex-col items-start">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
-          Jackson Paggs
-        </p>
-        <h1 className="mt-6 max-w-3xl text-5xl font-medium leading-tight tracking-tight sm:text-7xl">
-          Your tech,
-          <br />
-          run like a system.
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-foreground/60">
-          Noval Studios is outsourced CTO work — I build and run the
-          engineering behind your business, so it scales instead of
-          breaking.
-        </p>
-        <Link
-          href="/contact"
-          className="pointer-events-auto mt-10 inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 text-sm transition-colors hover:border-foreground/40"
-        >
-          Book a call
-        </Link>
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-start justify-center px-6 sm:px-10">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
+            Jackson Paggs
+          </p>
+          <h1 className="mt-6 max-w-3xl text-5xl font-medium leading-tight tracking-tight sm:text-7xl">
+            Your tech,
+            <br />
+            run like a system.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-foreground/60">
+            Noval Studios is outsourced CTO work — I build and run the
+            engineering behind your business, so it scales instead of
+            breaking.
+          </p>
+          <Link
+            href="/contact"
+            className="pointer-events-auto mt-10 inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 text-sm transition-colors hover:border-foreground/40"
+          >
+            Book a call
+          </Link>
+        </div>
       </div>
     </section>
   );
