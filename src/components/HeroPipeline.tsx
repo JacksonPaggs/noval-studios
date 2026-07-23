@@ -13,13 +13,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function HeroPipeline() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef({ value: 0 });
 
   useEffect(() => {
     if (!sectionRef.current) return;
-
-    const fadeStart = 0.85;
 
     const trigger = ScrollTrigger.create({
       trigger: sectionRef.current,
@@ -28,12 +25,6 @@ export default function HeroPipeline() {
       scrub: true,
       onUpdate: (self) => {
         progressRef.current.value = self.progress;
-
-        const fade =
-          self.progress < fadeStart
-            ? 1
-            : Math.max(0, 1 - (self.progress - fadeStart) / (1 - fadeStart));
-        if (wrapperRef.current) wrapperRef.current.style.opacity = String(fade);
       },
     });
 
@@ -42,7 +33,7 @@ export default function HeroPipeline() {
 
   return (
     <>
-      <div ref={wrapperRef} className="pointer-events-none fixed inset-0 -z-10">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <Canvas camera={{ position: [0, 0, 14], fov: 45 }} dpr={[1, 1.5]}>
           <CameraRig progressRef={progressRef} />
           <SystemsCore progressRef={progressRef} />

@@ -67,7 +67,7 @@ export default function Home() {
     <>
       <HeroPipeline />
 
-      <section className="relative flex flex-col gap-6 border-t border-foreground/10 bg-background px-6 py-24 sm:px-10">
+      <section className="relative flex flex-col gap-6 border-t border-foreground/10 px-6 py-24 sm:px-10">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
             The problem
@@ -86,7 +86,7 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <section className="relative flex flex-col gap-10 border-t border-foreground/10 bg-background px-6 py-24 sm:px-10">
+      <section className="relative flex flex-col gap-10 border-t border-foreground/10 px-6 py-24 sm:px-10">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
             What you get
@@ -105,7 +105,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative flex flex-col gap-10 border-t border-foreground/10 bg-background px-6 py-24 sm:px-10">
+      <section className="relative flex flex-col gap-10 border-t border-foreground/10 px-6 py-24 sm:px-10">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
             How it works
@@ -125,7 +125,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative flex flex-col gap-10 border-t border-foreground/10 bg-background px-6 py-24 sm:px-10">
+      <section className="relative flex flex-col gap-10 border-t border-foreground/10 px-6 py-24 sm:px-10">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
             Illustrative examples
@@ -164,7 +164,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative flex flex-col items-start gap-6 border-t border-foreground/10 bg-background px-6 py-32 sm:px-10">
+      <section className="relative flex flex-col items-start gap-6 border-t border-foreground/10 px-6 py-32 sm:px-10">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
             Get started
