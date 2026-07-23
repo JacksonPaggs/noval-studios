@@ -22,16 +22,32 @@ const vertexShader = `
     pos.x += sin(uTime * 0.8 + aRandom * 6.2831) * jitter;
     pos.y += cos(uTime * 0.7 + aRandom * 6.2831) * jitter;
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+    gl_PointSize = mix(7.0, 3.5, eased) * (300.0 / -mvPosition.z);
+    gl_Position = projectionMatrix * mvPosition;
   }
 `;
 
-const fragmentShader = `
+const fragmentShaderLine = `
   varying float vProgress;
 
   void main() {
     vec3 color = vec3(0.431, 0.420, 1.0) * 1.4;
-    float alpha = mix(0.4, 0.9, vProgress);
+    float alpha = mix(0.35, 0.8, vProgress);
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+const fragmentShaderPoint = `
+  varying float vProgress;
+
+  void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    float dist = length(uv);
+    if (dist > 0.5) discard;
+    float circle = smoothstep(0.5, 0.0, dist);
+    vec3 color = vec3(0.431, 0.420, 1.0) * 1.7;
+    float alpha = circle * mix(0.55, 1.0, vProgress);
     gl_FragColor = vec4(color, alpha);
   }
 `;
@@ -41,10 +57,11 @@ export default function SystemsCore({
 }: {
   progressRef: React.MutableRefObject<{ value: number }>;
 }) {
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const lineMaterialRef = useRef<THREE.ShaderMaterial>(null);
+  const pointMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const groupRef = useRef<THREE.Group>(null);
 
-  const { positions, starts, ends, randoms } = useMemo(() => {
+  const geometry = useMemo(() => {
     const solid = new THREE.IcosahedronGeometry(3.2, 1);
     const edges = new THREE.EdgesGeometry(solid);
     const endArray = edges.attributes.position.array as Float32Array;
@@ -73,38 +90,39 @@ export default function SystemsCore({
       }
     }
 
-    return {
-      positions: starts.slice(),
-      starts,
-      ends: endArray,
-      randoms,
-    };
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(starts.slice(), 3));
+    geo.setAttribute("aStart", new THREE.BufferAttribute(starts, 3));
+    geo.setAttribute("aEnd", new THREE.BufferAttribute(endArray, 3));
+    geo.setAttribute("aRandom", new THREE.BufferAttribute(randoms, 1));
+    return geo;
   }, []);
 
   useFrame((state, delta) => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.uProgress.value = progressRef.current.value;
-      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+    const p = progressRef.current.value;
+    const t = state.clock.elapsedTime;
+
+    if (lineMaterialRef.current) {
+      lineMaterialRef.current.uniforms.uProgress.value = p;
+      lineMaterialRef.current.uniforms.uTime.value = t;
+    }
+    if (pointMaterialRef.current) {
+      pointMaterialRef.current.uniforms.uProgress.value = p;
+      pointMaterialRef.current.uniforms.uTime.value = t;
     }
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.06;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
+      groupRef.current.rotation.x = Math.sin(t * 0.1) * 0.1;
     }
   });
 
   return (
     <group ref={groupRef} position={[1.6, 0, 0]}>
-      <lineSegments>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-          <bufferAttribute attach="attributes-aStart" args={[starts, 3]} />
-          <bufferAttribute attach="attributes-aEnd" args={[ends, 3]} />
-          <bufferAttribute attach="attributes-aRandom" args={[randoms, 1]} />
-        </bufferGeometry>
+      <lineSegments geometry={geometry}>
         <shaderMaterial
-          ref={materialRef}
+          ref={lineMaterialRef}
           vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
+          fragmentShader={fragmentShaderLine}
           uniforms={{
             uProgress: { value: 0 },
             uTime: { value: 0 },
@@ -115,6 +133,21 @@ export default function SystemsCore({
           toneMapped={false}
         />
       </lineSegments>
+      <points geometry={geometry}>
+        <shaderMaterial
+          ref={pointMaterialRef}
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShaderPoint}
+          uniforms={{
+            uProgress: { value: 0 },
+            uTime: { value: 0 },
+          }}
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </points>
     </group>
   );
 }
